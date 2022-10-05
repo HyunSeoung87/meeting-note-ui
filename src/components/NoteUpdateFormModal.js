@@ -1,16 +1,16 @@
 import React, {useState} from "react";
 import axios from "axios";
 
-function NoteFormModal(props) {
-    const {show, onClose, userId, onSaved} = props
+function NoteUpdateFormModal(props) {
+    const {show, onClose, userId, oldNote, onSaved, onSelectNote} = props
     const [newNote, setNewNote] = useState({
-        title: "",
-        meetingDate: "",
-        meetingTime: "",
-        place: "",
-        attendee: "",
-        text: "",
-        writer: null
+        title: oldNote.title,
+        meetingDate: oldNote.meetingDate,
+        meetingTime: oldNote.meetingTime,
+        place: oldNote.place,
+        attendee: oldNote.attendee,
+        text: oldNote.text,
+        writer: userId
     })
 
     const handleChangeInput = (event) => {
@@ -27,22 +27,22 @@ function NoteFormModal(props) {
     }
 
 
-    const handleClickSave = () => {
+    const handleClickSave = (id) => {
         if(!newNote.title | !newNote.text){
             return
         }
         // API
         const payload = {...newNote, writer: userId}
         // writerId 에 userId를 넣는다.
-        console.log(userId)
-
-        axios.post("/api/v1/notes", payload).then(response => {
-            console.log(response.status)
-            onSaved()
-        })
+        if (window.confirm("수정하시겠습니까?")){
+            axios.put("/api/v1/notes/"+id, payload).then(response => {
+                onSaved()
+                onClose()
+                onSelectNote(id)
+            })
+        }
 
     }
-
 
 
 
@@ -125,7 +125,7 @@ function NoteFormModal(props) {
                         </div>
                     </div>
                     <div className="is-flex is-justify-content-flex-end buttons">
-                        <button className="button is-small is-primary" onClick={handleClickSave}>SAVE</button>
+                        <button className="button is-small is-primary" onClick={() =>handleClickSave(oldNote.id)}>SAVE</button>
                         <button className="button is-small is-light" onClick={onClose}>CLOSE</button>
                     </div>
                 </div>
@@ -136,4 +136,4 @@ function NoteFormModal(props) {
 
 }
 
-export default NoteFormModal;
+export default NoteUpdateFormModal;

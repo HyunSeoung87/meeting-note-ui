@@ -1,10 +1,9 @@
-import React, {useRef, useState} from "react";
+import React, {useRef} from "react";
 
 
 function NoteList(props) {
 
     const {noteList, onSelectNote, noteStyle} = props
-    const [style, setStyle] = useState(null)
     const tableStyle = useRef()
     const handleClickTable = (id) => {
         onSelectNote(id)

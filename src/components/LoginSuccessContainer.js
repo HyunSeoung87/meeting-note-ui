@@ -13,7 +13,8 @@ function LoginSuccessContainer(props) {
     const [noteList, setNoteList] = useState([])
     const [selectedNote, setSelectNote] = useState(null)
     const [style, setStyle] = useState(true)
-    const [showModal, setShowModal] = useState(false)
+    const [showNewModal, setShowNewModal] = useState(false)
+
 
     useEffect(() => {
         fetchData()
@@ -32,19 +33,18 @@ function LoginSuccessContainer(props) {
     //    noteList에서 key는 id인것을 찾고 noteId와 같은 value를 찾는다.
         setSelectNote(findNote)
         setStyle(style ? false : true)
-        // var noteS =
     //    useRef 사용해보기
     }
 
 
-    const openModal = () => {
-        setShowModal(true)
+    const openNewModal = () => {
+        setShowNewModal(true)
     }
-    const closeModal = () => {
-        setShowModal(false)
+    const closeNewModal = () => {
+        setShowNewModal(false)
     }
     const closeAndFetch = () => {
-        closeModal()
+        closeNewModal()
         fetchData()
         // 닫고 데이터를 다시 받아와라
     }
@@ -53,11 +53,11 @@ function LoginSuccessContainer(props) {
         <div>
             <Header userInfo={userInfo} onLogout={onLogout}/>
             <div className="is-flex is-justify-content-flex-end px-4 pt-4 pb-0 mb-0">
-                <button className="button is-primary is-small" onClick={openModal}>NEW</button>
+                <button className="button is-primary is-small" onClick={openNewModal}>NEW</button>
             </div>
             <NoteList noteList={noteList} onSelectNote={handleSelectNote} noteStyle = {style}/>
-            {!!selectedNote && <NoteDetail note={selectedNote}/>}
-            {showModal && <NoteFormModal show={showModal} onClose={closeModal} userId={userInfo.userId} onSaved={closeAndFetch}/>}
+            {!!selectedNote && <NoteDetail note={selectedNote} userId={userInfo.id} onSelectNote={handleSelectNote} onSaved={closeAndFetch}/>}
+            {showNewModal && <NoteFormModal show={showNewModal} onClose={closeNewModal} userId={userInfo.id} onSaved={closeAndFetch}/>}
         </div>
     );
 
