@@ -15,7 +15,22 @@ function NoteDetail(props) {
     })
     const [commentList, setCommentList] = useState([])
     const [showComment, setShowComment] = useState(false)
+    const nullComment = {
+        "noteId": 0,
+        "writerId": 0,
+        "text": ""
+    }
 
+    const deleteComment = (noteId,commentId) => {
+        if (window.confirm("삭제하시겠습니까?")) {
+            alert("삭제되었습니다.")
+            axios.delete("/api/v1/notes/"+noteId+"/comments/"+commentId).then(res => res.data)
+            fetchData()
+        }
+        else {
+            alert("취소되었습니다.")
+        }
+    }
     const deleteNote = (id) => {
         if (window.confirm("삭제하시겠습니까?")) {
             alert("삭제되었습니다.")
@@ -29,7 +44,7 @@ function NoteDetail(props) {
     // 여기서 fetchData를 이용해 데이터를 detail이 바뀔 때 마다 불러오기
     useEffect(() => {
         fetchData()
-    }, note.id)
+    }, [note.id])
 
     const handleChangeInput = (event) => {
         const key = event.target.name
@@ -42,11 +57,10 @@ function NoteDetail(props) {
     const fetchData = () => {
         axios.get("/api/v1/notes/"+note.id+"/comments/list").then(res => res.data)
             .then(payload => {
-                console.log(payload.data)
-                setCommentList(payload.data)
-                if (!!commentList){
+                if (payload.data.length != 0)
+                    console.log(payload.data)
+                    setCommentList(payload.data)
                     setShowComment(true)
-                }
             })
     }
     const handleClickSave = () => {
@@ -56,12 +70,11 @@ function NoteDetail(props) {
         // API
         const payload = {...newComment, writerId: userId, noteId : note.id}
         // writerId 에 userId를 넣는다.
-        console.log(userId)
 
-        axios.post("/api/v1/notes/"+note.id+"/comments", payload).then(response => {
-            console.log(response.status)
+        axios.post("/api/v1/notes/"+note.id+"/comments", payload).then(payload => {
             onSaved()
             fetchData()
+            setNewComment(nullComment)
         })
 
 
@@ -105,8 +118,6 @@ function NoteDetail(props) {
                 </tbody>
             </table>
             <pre className="box has-background-white-ter">{note.text}</pre>
-            <hr/>
-            {showComment && <CommentList commentList={commentList}/>}
             <article className="media">
                 <div className="media-content">
                     <div className="field control">
@@ -123,6 +134,8 @@ function NoteDetail(props) {
                     </nav>
                 </div>
             </article>
+            <hr/>
+            {showComment && <CommentList noteId={note.id} commentList={commentList} fetch={deleteComment}/>}
 
         </div>
     );

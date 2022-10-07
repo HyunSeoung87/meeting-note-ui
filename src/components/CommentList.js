@@ -1,27 +1,22 @@
 import React, {Component} from 'react';
+import axios from "axios";
 
 function CommentList(props) {
-    const {commentList} = props
+    const {noteId, commentList, fetch} = props
+
+
+
     return (
         <div className="block p-4">
-            <p>asdfasdfasdf</p>
-            <p>{commentList.text}</p>
-        {/*    TODO
-            여기 unreachable인데 이거 왜 인지 알아내고 수정하기
-        */}
         { commentList?.length !== 0 && commentList.map((cmmt) => {
-            return
-                <article className="media">
-                    <figure className="media-left">
-                        <p className="image is-64x64">
-                        </p>
-                    </figure>
+            return(
+                <div key={cmmt.id} className="media">
                     <div className="media-content">
                         <div className="content">
-                            <p>
+                            <div>
                                 <strong>{cmmt.writerName}</strong>
-                                <p>{cmmt.text}</p>
-                            </p>
+                                <div>{cmmt.text}</div>
+                            </div>
                         </div>
                         <nav className="level is-mobile">
                             <div className="level-left">
@@ -38,9 +33,11 @@ function CommentList(props) {
                         </nav>
                     </div>
                     <div className="media-right">
-                        <button className="delete"></button>
+                        <button className="delete" onClick={() =>fetch(noteId, cmmt.id)}></button>
                     </div>
-                </article>
+                </div>
+            )
+
 
             })}
         </div>
